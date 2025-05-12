@@ -1,7 +1,7 @@
 /**
  * Sample React Native App
  * https://github.com/facebook/react-native
- *
+ * 
  * @format
  */
 
@@ -9,6 +9,7 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   ScrollView,
+  Button,
   StatusBar,
   StyleSheet,
   Text,
@@ -31,7 +32,7 @@ type SectionProps = PropsWithChildren<{
 function Section({children, title}: SectionProps): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
+    <View style={[styles.sectionContainer, {marginTop: 0}]}>
       <Text
         style={[
           styles.sectionTitle,
@@ -55,6 +56,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
+  const [vpnStatus, setVpnStatus] = React.useState('disconnected'); // 'disconnected', 'connecting', 'connected', 'disconnecting'
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -72,6 +74,26 @@ function App(): React.JSX.Element {
    */
   const safePadding = '5%';
 
+  const toggleVpn = async () => {
+    if (vpnStatus === 'disconnected') {
+      setVpnStatus('connecting');
+      // TODO: Integrate vpnclient-engine-react-native connect function here
+      // Example: await connectVpn();
+      // setVpnStatus('connected'); // Set to connected on success
+      // Handle errors and revert state if connection fails
+    } else if (vpnStatus === 'connected') {
+      setVpnStatus('disconnecting');
+      // TODO: Integrate vpnclient-engine-react-native disconnect function here
+      // Example: await disconnectVpn();
+      // setVpnStatus('disconnected'); // Set to disconnected on success
+      // Handle errors and revert state if disconnection fails
+    }
+  };
+
+  // TODO: Consider adding a useEffect to listen for VPN state changes from the library
+  // and update the vpnStatus state accordingly.
+
+
   return (
     <View style={backgroundStyle}>
       <StatusBar
@@ -82,6 +104,10 @@ function App(): React.JSX.Element {
         style={backgroundStyle}>
         <View style={{paddingRight: safePadding}}>
           <Header/>
+        </View>
+        <View style={{marginHorizontal: safePadding, marginBottom: 20}}>
+           <Button title={vpnStatus === 'connected' ? 'Disconnect VPN' : 'Connect VPN'} onPress={toggleVpn} />
+           {vpnStatus !== 'disconnected' && <Text style={{textAlign: 'center', marginTop: 10}}>Status: {vpnStatus}</Text>}
         </View>
         <View
           style={{
