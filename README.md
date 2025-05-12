@@ -23,23 +23,22 @@ A cross-platform, open-source VPN client with support for multiple protocols (Xr
 
 ## 📦 Architecture Overview
 
-```mermaid
 flowchart LR
-    subgraph UI["React Native UI"]
-        A[Components] --> B[State Management]
-    end
-    
-    subgraph Bridge["React Native Bridge"]
-        C[Native Modules]
-    end
-    
-    subgraph Engine["Native Core"]
-        D[Xray] --> F[Network Stack]
-        E[WireGuard] --> F
-    end
-    
-    UI --> Bridge --> Engine
-```
+	subgraph subGraph0["ReactNative Application"]
+		UI@{ label: "VPNclient App (<span style=\"color:\">ReactNative UI)</span>" }
+	end
+	subgraph subGraph1["ReactNative Plugin"]
+		Plugin["VPNclient Engine ReactNative"]
+	end
+	subgraph subGraph2["Native Core"]
+		Core["VPNclient Engine Library"]
+	end
+		UI --> Plugin
+		Plugin --> Core
+		Core --> iOS["iOS"] & Android["Android"] & macOS["macOS"] & Windows["Windows"] & Linux["Linux"]
+
+		UI@{ shape: rect}
+
 
 **Technology Stack**:
 - **Frontend**: React Native, TypeScript
