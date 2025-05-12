@@ -7,7 +7,7 @@ A cross-platform, open-source VPN client with support for multiple protocols (Xr
 
 ### Core Functionality
 - **Multi-Protocol Support**: VMess, VLESS, Reality (Xray), WireGuard, OpenVPN
-- **Cross-Platform**: iOS, Android, Windows, macOS, Linux
+- **Cross-Platform**: iOS, Android
 - **Subscription Management**: Import server lists via URL
 - **Advanced Routing**: Split tunneling, domain rules, app-level routing
 
