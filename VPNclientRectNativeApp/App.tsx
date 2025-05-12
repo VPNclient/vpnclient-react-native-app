@@ -8,7 +8,6 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {
-  ScrollView,
   Button,
   StatusBar,
   StyleSheet,
@@ -57,6 +56,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
+  const [connectionStatus, setConnectionStatus] = React.useState('disconnected');
   const [vpnStatus, setVpnStatus] = React.useState<ConnectionStatus>('disconnected');
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -76,24 +76,21 @@ function App(): React.JSX.Element {
   const safePadding = '5%';
 
   const toggleVpn = async () => {
-    if (vpnStatus === 'disconnected') {
+    if (connectionStatus === 'disconnected') {
       try {
-        setVpnStatus('connecting');
-        // Connect to subscription 0, server 1 as per example
-        await VPNClientEngine.connect(0, 1);
-        // State will be updated by the event listener
+        setConnectionStatus('connecting');
+        // TODO: Add your VPN connection logic using vpnclient-engine-react-native here.
+        // Example: await VPNClientEngine.connect({ /* connection options */ });
       } catch (error) {
         console.error('Failed to connect VPN:', error);
-        setVpnStatus('disconnected'); // Revert state on error
+        setConnectionStatus('disconnected'); // Revert state on error
       }
-    } else if (vpnStatus === 'connected') {
+    } else if (connectionStatus === 'connected') {
       try {
-        setVpnStatus('disconnecting');
-        await VPNClientEngine.disconnect();
-        // State will be updated by the event listener
+        setConnectionStatus('disconnecting');
+        // TODO: Add your VPN disconnection logic using vpnclient-engine-react-native here.
       } catch (error) {
         console.error('Failed to disconnect VPN:', error);
-        setVpnStatus('connected'); // Revert state on error
       }
     }
   };
@@ -104,7 +101,7 @@ function App(): React.JSX.Element {
 
     // Add listener for connection status changes
     const statusListener = VPNClientEngine.addListener('onConnectionStatusChanged', (status: ConnectionStatus) => {
-      console.log("Connection status changed:", status);
+      setConnectionStatus(status);
       setVpnStatus(status);
     });
 
@@ -121,14 +118,9 @@ function App(): React.JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
-        style={backgroundStyle}>
+      <View style={backgroundStyle}>
         <View style={{paddingRight: safePadding}}>
           <Header/>
-        </View>
-        <View style={{marginHorizontal: safePadding, marginBottom: 20}}>
-           <Button title={vpnStatus === 'connected' ? 'Disconnect VPN' : 'Connect VPN'} onPress={toggleVpn} />
-           {vpnStatus !== 'disconnected' && <Text style={{textAlign: 'center', marginTop: 10}}>Status: {vpnStatus}</Text>}
         </View>
         <View
           style={{
@@ -152,6 +144,10 @@ function App(): React.JSX.Element {
           <LearnMoreLinks />
         </View>
       </ScrollView>
+      <View style={{marginHorizontal: safePadding, marginBottom: 20}}>
+         <Button title={connectionStatus === 'connected' ? 'Disconnect VPN' : 'Connect VPN'} onPress={toggleVpn} />
+         <Text style={{textAlign: 'center', marginTop: 10}}>Status: {connectionStatus}</Text>
+      </View>
     </View>
   );
 }
