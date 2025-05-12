@@ -23,6 +23,7 @@ A cross-platform, open-source VPN client with support for multiple protocols (Xr
 
 ## 📦 Architecture Overview
 
+```mermaid
 flowchart LR
 	subgraph subGraph0["ReactNative Application"]
 		UI@{ label: "VPNclient App (<span style=\"color:\">ReactNative UI)</span>" }
@@ -38,7 +39,7 @@ flowchart LR
 		Core --> iOS["iOS"] & Android["Android"] & macOS["macOS"] & Windows["Windows"] & Linux["Linux"]
 
 		UI@{ shape: rect}
-
+```
 
 **Technology Stack**:
 - **Frontend**: React Native, TypeScript
