@@ -10,7 +10,8 @@
     "test": "jest"
   },
   "dependencies": {
-    "react": "19.0.0",
+ "vpnclient-engine-react-native": "https://github.com/VPNclient/VPNclient-engine-react-native",
+ "react": "19.0.0",
     "react-native": "0.79.2"
   },
   "devDependencies": {
