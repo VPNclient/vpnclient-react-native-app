@@ -16,6 +16,7 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import VPNClientEngine, { ConnectionStatus } from 'vpnclient-engine-react-native';
 
 import {
   Colors,
@@ -56,7 +57,7 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 }
 
 function App(): React.JSX.Element {
-  const [vpnStatus, setVpnStatus] = React.useState('disconnected'); // 'disconnected', 'connecting', 'connected', 'disconnecting'
+  const [vpnStatus, setVpnStatus] = React.useState<ConnectionStatus>('disconnected');
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -76,22 +77,42 @@ function App(): React.JSX.Element {
 
   const toggleVpn = async () => {
     if (vpnStatus === 'disconnected') {
-      setVpnStatus('connecting');
-      // TODO: Integrate vpnclient-engine-react-native connect function here
-      // Example: await connectVpn();
-      // setVpnStatus('connected'); // Set to connected on success
-      // Handle errors and revert state if connection fails
+      try {
+        setVpnStatus('connecting');
+        // Connect to subscription 0, server 1 as per example
+        await VPNClientEngine.connect(0, 1);
+        // State will be updated by the event listener
+      } catch (error) {
+        console.error('Failed to connect VPN:', error);
+        setVpnStatus('disconnected'); // Revert state on error
+      }
     } else if (vpnStatus === 'connected') {
-      setVpnStatus('disconnecting');
-      // TODO: Integrate vpnclient-engine-react-native disconnect function here
-      // Example: await disconnectVpn();
-      // setVpnStatus('disconnected'); // Set to disconnected on success
-      // Handle errors and revert state if disconnection fails
+      try {
+        setVpnStatus('disconnecting');
+        await VPNClientEngine.disconnect();
+        // State will be updated by the event listener
+      } catch (error) {
+        console.error('Failed to disconnect VPN:', error);
+        setVpnStatus('connected'); // Revert state on error
+      }
     }
   };
 
-  // TODO: Consider adding a useEffect to listen for VPN state changes from the library
-  // and update the vpnStatus state accordingly.
+  React.useEffect(() => {
+    // Initialize the VPN engine
+    VPNClientEngine.initialize();
+
+    // Add listener for connection status changes
+    const statusListener = VPNClientEngine.addListener('onConnectionStatusChanged', (status: ConnectionStatus) => {
+      console.log("Connection status changed:", status);
+      setVpnStatus(status);
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => {
+      statusListener.remove();
+    };
+  }, []); // Empty dependency array means this effect runs only once on mount
 
 
   return (
