@@ -36,7 +36,7 @@ flowchart LR
 	end
 		UI --> Plugin
 		Plugin --> Core
-		Core --> iOS["iOS"] & Android["Android"] & macOS["macOS"] & Windows["Windows"] & Linux["Linux"]
+		Core --> iOS["iOS"] & Android["Android"]
 
 		UI@{ shape: rect}
 ```
